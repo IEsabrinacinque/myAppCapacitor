@@ -1,0 +1,41 @@
+<div class="container py-4">
+  <h2 class="mb-4">Funzioni native</h2>
+
+  <!-- BOTTONI -->
+  @if (isNative) {
+  <div class="d-flex gap-3 mb-4">
+    <button class="btn btn-primary btn-lg" (click)="takePhoto()">📸 Scatta foto</button>
+
+    <button class="btn btn-outline-primary btn-lg" (click)="pickFromGallery()">🖼 Galleria</button>
+  </div>
+  } @else {
+  <button class="btn btn-primary btn-lg" (click)="fileInput.click()">📂 Carica file</button>
+
+  <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected(fileInput)" />
+  }
+
+  <!-- PREVIEW -->
+  @if (imagePreview && imageInfo) {
+  <div class="row mt-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card shadow-sm bg-dark border-0">
+        <img
+          [src]="imagePreview"
+          [attr.data-key]="previewKey"
+          class="card-img-top"
+          style="height: 220px; object-fit: contain"
+        />
+
+        <div class="card-body py-2">
+          <h6 class="mb-1 text-white text-truncate">
+            {{ imageInfo.name }}
+          </h6>
+          <small class="text-secondary">
+            {{ imageInfo.type }} · {{ imageInfo.size }} KB
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
