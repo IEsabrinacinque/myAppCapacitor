@@ -1,0 +1,55 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+:root {
+  --primary: #4f46e5;
+  --secondary: #22d3ee;
+  --bg-dark: #0b0f19;
+  --card-dark: #111827;
+  --text-light: #e5e7eb;
+}
+
+body {
+  background: radial-gradient(circle at top, #1e293b, #020617);
+  color: var(--text-light);
+  font-family: Inter, system-ui, sans-serif;
+  /* ❌ RIMUOVI QUESTI */
+  /* padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right); */
+}
+
+/* CARD */
+.card-dark {
+  background: linear-gradient(145deg, #0f172a, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+/* BOTTONI */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+}
+
+/* TITOLI */
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* 🔥 Safe area + un po' di margine extra */
+  padding-top: max(env(safe-area-inset-top, 0px), 50px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+main.flex-fill {
+  flex: 1;
+}
