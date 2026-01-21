@@ -1,31 +1,170 @@
+<!-- page2.html -->
 <div class="container section">
-
   <div class="row justify-content-center">
-    <div class="col-lg-6">
+    <div class="col-12 col-lg-6">
+      <div class="card-glass p-4 p-md-5">
+        <h3 class="mb-4 text-center">Registrazione Cliente</h3>
 
-      <div class="card-glass p-5">
+        <form>
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Nome"
+            [(ngModel)]="model.nome"
+            name="nome"
+          />
 
-        <h3 class="mb-3">Parliamone</h3>
-        <p class="mb-4">
-          Raccontaci il tuo progetto.
-        </p>
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Cognome"
+            [(ngModel)]="model.cognome"
+            name="cognome"
+          />
 
-        <div class="mb-3">
-          <input class="form-control form-control-lg" placeholder="Email">
-        </div>
+          <select class="form-select form-select-lg mb-3" [(ngModel)]="model.sesso" name="sesso">
+            <option value="">Sesso</option>
+            <option value="M">Maschio</option>
+            <option value="F">Femmina</option>
+          </select>
 
-        <div class="mb-4">
-          <textarea class="form-control form-control-lg" rows="4"
-            placeholder="Messaggio"></textarea>
-        </div>
+          <label>Data Di Nascita</label>
+          <input
+            type="date"
+            class="form-control form-control-lg mb-3"
+            [(ngModel)]="model.dataNascita"
+            name="dataNascita"
+          />
 
-        <button class="btn btn-primary btn-lg w-100">
-          Invia messaggio
-        </button>
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Comune"
+            [(ngModel)]="model.comune"
+            name="comune"
+          />
 
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Provincia"
+            [(ngModel)]="model.provincia"
+            name="provincia"
+          />
+
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Codice Fiscale"
+            [(ngModel)]="model.codiceFiscale"
+            name="codiceFiscale"
+          />
+
+           <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Indirizzo di Residenza"
+            [(ngModel)]="model.indirizzoResidenza"
+            name="indirizzoResidenza"
+          />
+
+           <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Numero Civico"
+            [(ngModel)]="model.civicoResidenza"
+            name="civicoResidenza"
+          />
+
+           <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Comune di Residenza"
+            [(ngModel)]="model.comuneResidenza"
+            name="comuneResidenza"
+          />
+
+           <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Provincia di Residenza"
+            [(ngModel)]="model.provinciaResidenza"
+            name="provinciaResidenza"
+          />
+          <input
+            class="form-control form-control-lg mb-3"
+            placeholder="Telefono"
+            [(ngModel)]="model.telefono"
+            name="telefono"
+          />
+
+          <input
+            type="email"
+            class="form-control form-control-lg mb-3"
+            placeholder="Email"
+            [(ngModel)]="model.email"
+            name="email"
+          />
+
+          <!-- PASSWORD CON TOGGLE OCCHIO -->
+          <div class="mb-4">
+            <div class="input-group">
+              <input
+                class="form-control form-control-lg"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="Password"
+                [(ngModel)]="model.password"
+                name="password"
+              />
+              
+              <!-- 🔥 OCCHIO TOGGLE -->
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="togglePassword()"
+                tabindex="-1"
+              >
+                {{ showPassword ? '👁️ Nascondi' : '👁️ Mostra' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- BOTTONE REGISTRATI -->
+          <button
+            type="button"
+            class="btn btn-primary btn-lg w-100 mb-3"
+            [disabled]="isLoading"
+            (click)="registraCliente()"
+          >
+            {{ isLoading ? 'Invio in corso…' : 'Registrati' }}
+          </button>
+
+          <div *ngIf="isLoading" class="loading-overlay">
+            <div class="spinner-border text-primary"></div>
+          </div>
+        </form>
       </div>
-
     </div>
   </div>
-
 </div>
+
+<!-- 🔥 MODALE BOOTSTRAP - FUORI DAL FORM! -->
+@if (showToast) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" [ngClass]="{
+        'border-success': toastType === 'success',
+        'border-danger': toastType === 'error',
+        'border-warning': toastType === 'warning'
+      }">
+        <div class="modal-header" [ngClass]="{
+          'bg-success': toastType === 'success',
+          'bg-danger': toastType === 'error',
+          'bg-warning': toastType === 'warning'
+        }">
+          <h5 class="modal-title text-white">
+            {{ toastType === 'success' ? '✅ Successo' : toastType === 'error' ? '❌ Errore' : '⚠️ Attenzione' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="showToast = false"></button>
+        </div>
+        <div class="modal-body">
+          {{ toastMessage }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="showToast = false">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
