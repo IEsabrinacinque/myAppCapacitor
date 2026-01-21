@@ -180,8 +180,15 @@ export class Page2 {
         MD5: md5,
       };
 
+      // 🔥 LOGICA CONDIZIONALE
+      const apiUrl = Capacitor.isNativePlatform()
+        ? 'https://broker.newpicass.it/api/mobile/RegistratiMobile' // APK finale - URL completa
+        : '/api/mobile/RegistratiMobile'; // Web - usa il proxy
+
+      console.log('📤 URL:', apiUrl);
+
       this.http
-        .post('/api/mobile/RegistratiMobile', payload)
+        .post(apiUrl, payload)
         .pipe(
           finalize(() => {
             this.isLoading = false;
@@ -193,7 +200,7 @@ export class Page2 {
 
             if (res?.codErrore === 0) {
               this.mostraToast('✅ Registrazione completata!', 'success');
-              this.resetForm(); // 🔥 PULISCI I CAMPI
+              this.resetForm();
             } else {
               this.mostraToast(res?.messaggio || 'Errore sconosciuto', 'error');
             }
