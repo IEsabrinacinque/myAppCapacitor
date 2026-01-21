@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, CapacitorHttp, HttpResponse } from '@capacitor/core'; // ← Questo rimane
 import { SecurityHelper } from '../../utils/security-helper';
 import { finalize } from 'rxjs/operators';
 import { ChangeDetectorRef } from '@angular/core';
@@ -23,7 +23,6 @@ export class Page2 {
   showPassword = false;
   isLoading = false;
 
-  // 🔹 MODALE
   toastMessage = '';
   toastType: 'success' | 'error' | 'warning' = 'success';
   showToast = false;
@@ -50,17 +49,15 @@ export class Page2 {
     this.showPassword = !this.showPassword;
   }
 
-  // 🔥 MOSTRA MODALE
-
   private mostraToast(messaggio: string, tipo: 'success' | 'error' | 'warning') {
     this.toastMessage = messaggio;
     this.toastType = tipo;
     this.showToast = true;
-    this.cdr.markForCheck(); // 🔥 CAMBIA QUA
+    this.cdr.markForCheck();
 
     setTimeout(() => {
       this.showToast = false;
-      this.cdr.markForCheck(); // 🔥 E QUA
+      this.cdr.markForCheck();
     }, 5000);
   }
 
@@ -115,7 +112,6 @@ export class Page2 {
     return true;
   }
 
-  // 🔥 RESET FORM
   private resetForm() {
     this.model = {
       nome: '',
@@ -137,7 +133,8 @@ export class Page2 {
     this.showPassword = false;
   }
 
-  registraCliente() {
+  // 🔥 FUNZIONE CON CAPACITOR HTTP request()
+  async registraCliente() {
     if (!this.validaFormulario()) {
       return;
     }
@@ -180,36 +177,63 @@ export class Page2 {
         MD5: md5,
       };
 
-      // 🔥 LOGICA CONDIZIONALE
-      const apiUrl = Capacitor.isNativePlatform()
-        ? 'https://broker.newpicass.it/api/mobile/RegistratiMobile' // APK finale - URL completa
-        : '/api/mobile/RegistratiMobile'; // Web - usa il proxy
+      const apiUrl = 'https://broker.newpicass.it/api/mobile/RegistratiMobile';
 
-      console.log('📤 URL:', apiUrl);
+      // 🔥 SE SEI SU MOBILE, USA CAPACITOR HTTP request() (NO CORS!)
+      if (Capacitor.isNativePlatform()) {
+        console.log('📱 MOBILE - Usando CapacitorHttp.request() (NO CORS)');
+        
+        try {
+          const response: HttpResponse = await CapacitorHttp.request({  // ← USA request()
+            url: apiUrl,
+            method: 'POST',  // ← Specifica il metodo
+            headers: { 'Content-Type': 'application/json' },
+            data: payload,
+          });
 
-      this.http
-        .post(apiUrl, payload)
-        .pipe(
-          finalize(() => {
-            this.isLoading = false;
-          }),
-        )
-        .subscribe({
-          next: (res: any) => {
-            console.log('✅ RISPOSTA API:', res);
+          console.log('✅ RISPOSTA API:', response.data);
 
-            if (res?.codErrore === 0) {
-              this.mostraToast('✅ Registrazione completata!', 'success');
-              this.resetForm();
-            } else {
-              this.mostraToast(res?.messaggio || 'Errore sconosciuto', 'error');
-            }
-          },
-          error: (err) => {
-            console.error('❌ ERRORE API:', err);
-            this.mostraToast('❌ Errore durante la registrazione', 'error');
-          },
-        });
+          if (response.data?.codErrore === 0) {
+            this.mostraToast('✅ Registrazione completata!', 'success');
+            this.resetForm();
+          } else {
+            this.mostraToast(response.data?.messaggio || 'Errore sconosciuto', 'error');
+          }
+        } catch (err: any) {
+          console.error('❌ ERRORE API:', err);
+          this.mostraToast('❌ Errore durante la registrazione', 'error');
+        } finally {
+          this.isLoading = false;
+        }
+      } 
+      // 🌐 SE SEI SUL WEB, USA HTTPCLIENT CON PROXY
+      else {
+        console.log('🌐 WEB - Usando HttpClient con proxy');
+        
+        this.http
+          .post('/api/mobile/RegistratiMobile', payload)
+          .pipe(
+            finalize(() => {
+              this.isLoading = false;
+            }),
+          )
+          .subscribe({
+            next: (res: any) => {
+              console.log('✅ RISPOSTA API:', res);
+
+              if (res?.codErrore === 0) {
+                this.mostraToast('✅ Registrazione completata!', 'success');
+                this.resetForm();
+              } else {
+                this.mostraToast(res?.messaggio || 'Errore sconosciuto', 'error');
+              }
+            },
+            error: (err) => {
+              console.error('❌ ERRORE API:', err);
+              this.mostraToast('❌ Errore durante la registrazione', 'error');
+            },
+          });
+      }
     } catch (err) {
       console.error('❌ ERRORE BLOCCANTE:', err);
       this.isLoading = false;
