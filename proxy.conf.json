@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://broker.newpicass.it",
+    "secure": true,
+    "changeOrigin": true
+  }
+}
