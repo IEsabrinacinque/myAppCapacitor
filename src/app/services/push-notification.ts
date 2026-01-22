@@ -24,7 +24,7 @@ export class PushNotificationService {
       const permStatus = await PushNotifications.requestPermissions();
       
       if (permStatus.receive !== 'granted') {
-        console.error('❌ Permessi push notifications negati');
+        console.error('❌ Permessi push notifications negati o non ancora accettati');
         return null;
       }
 
