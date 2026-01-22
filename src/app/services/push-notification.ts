@@ -6,7 +6,7 @@ import { Capacitor } from '@capacitor/core';
   providedIn: 'root',
 })
 export class PushNotificationService {
-
+  
   // ✅ EventEmitter per comunicare con i component
   public notificationReceived = new EventEmitter<PushNotificationSchema>();
 
@@ -21,14 +21,18 @@ export class PushNotificationService {
     console.log('📱 Inizializzazione Push Notifications...');
 
     try {
-      const permStatus = await PushNotifications.requestPermissions();
-      
-      if (permStatus.receive !== 'granted') {
-        console.error('❌ Permessi push notifications negati o non ancora accettati');
-        return null;
+      // ✅ SOLO su Android chiedi permessi
+      if (Capacitor.getPlatform() === 'android') {
+        const permStatus = await PushNotifications.requestPermissions();
+        if (permStatus.receive !== 'granted') {
+          console.error('❌ Permessi Android negati');
+          return null;
+        }
+        console.log('✅ Permessi Android granted!');
       }
+      // Su iOS AppDelegate gestisce i permessi, skippa questo step!
 
-      console.log('✅ Permessi granted!');
+      // ✅ REGISTRA SEMPRE
       await PushNotifications.register();
 
       // Token ricevuto
@@ -42,7 +46,7 @@ export class PushNotificationService {
         console.error('❌ Errore registrazione push:', error);
       });
 
-      // ✅ Notifica ricevuta in foreground - USA L'EVENT EMITTER!
+      // ✅ Notifica ricevuta in foreground
       PushNotifications.addListener(
         'pushNotificationReceived',
         (notification: PushNotificationSchema) => {
@@ -62,8 +66,8 @@ export class PushNotificationService {
         }
       );
 
+      console.log('✅ Push Notifications inizializzate!');
       return 'initialized';
-
     } catch (error) {
       console.error('❌ Errore init push notifications:', error);
       return null;
